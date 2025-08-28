@@ -256,16 +256,17 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
             </div>
           )}
 
-          {/* No Results */}
-          {!loading && recipes.length === 0 && searchTerm && (
+          {/* No Results (always show if not loading and no recipes) */}
+          {!loading && recipes.length === 0 && (
             <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
               <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
                 No recipes found
               </h3>
               <p className="text-gray-500">
-                Try searching with different keywords or check your internet
-                connection
+                {searchTerm
+                  ? "Try searching with different keywords or check your internet connection"
+                  : "No recipes available at the moment. Please try again later."}
               </p>
             </div>
           )}
