@@ -49,7 +49,7 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
         )}&number=12&addRecipeInformation=true&fillIngredients=true`;
       } else {
         // Get random popular recipes
-        url = `${SPOONACULAR_BASE_URL}/random?apiKey=${SPOONACULAR_API_KEY}&number=12`;
+        url = `${SPOONACULAR_BASE_URL}/random?apiKey=${SPOONACULAR_API_KEY}&number=24`;
       }
 
       const response = await fetch(url);
@@ -77,8 +77,6 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
         summary: recipe.summary,
         sourceUrl: recipe.sourceUrl || recipe.spoonacularSourceUrl || "#",
       }));
-
-      console.log("Transformed Recipes:", transformedRecipes);
 
       setRecipes(transformedRecipes);
     } catch (error) {
@@ -189,21 +187,37 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
               {recipes.map((recipe) => (
                 <div
                   key={recipe.id}
-                  className="bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 rounded-xl shadow-md border border-pink-100 overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col"
+                  className="bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 rounded-xl shadow-md border border-pink-100 overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col cursor-pointer group"
+                  onClick={() => setSelectedRecipe(recipe)}
+                  tabIndex={0}
+                  role="button"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ")
+                      setSelectedRecipe(recipe);
+                  }}
                 >
                   <div className="relative">
                     <img
                       src={recipe.image}
                       alt={recipe.title}
-                      className="w-full h-44 sm:h-48 object-cover"
+                      className="w-full h-44 sm:h-48 object-cover transition-transform duration-300 group-hover:scale-110 group-focus:scale-110"
                     />
                     <button
-                      onClick={() => onToggleFavorite(recipe)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleFavorite(recipe);
+                      }}
                       className={`absolute top-3 right-3 p-2 rounded-full shadow-lg transition-colors ${
                         isFavorite(recipe)
                           ? "bg-red-100 text-red-600 hover:bg-red-200"
                           : "bg-white text-gray-400 hover:text-red-600 hover:bg-red-50"
                       }`}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        e.stopPropagation();
+                        if (e.key === "Enter" || e.key === " ")
+                          onToggleFavorite(recipe);
+                      }}
                     >
                       <Heart
                         className={`h-5 w-5 ${
@@ -234,17 +248,15 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
                     </p>
 
                     <div className="flex items-center justify-between mt-auto">
-                      <button
-                        onClick={() => setSelectedRecipe(recipe)}
-                        className="text-pink-600 hover:text-pink-800 font-medium text-sm"
-                      >
+                      <span className="text-pink-600 font-medium text-sm opacity-70 group-hover:underline">
                         View Details
-                      </button>
+                      </span>
                       <a
                         href={recipe.sourceUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center text-orange-400 hover:text-orange-600 text-sm"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <ExternalLink className="h-4 w-4 mr-1" />
                         Recipe Source
