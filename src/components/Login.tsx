@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { User, Lock, ChefHat } from "lucide-react";
 
 // Use Unsplash image for food/recipe background
@@ -60,7 +62,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               </label>
               <div className="relative">
                 <User className="h-5 w-5 text-pink-300 absolute left-3 top-3.5" />
-                <input
+                <Input
                   type="email"
                   value={credentials.email}
                   onChange={(e) =>
@@ -79,7 +81,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               </label>
               <div className="relative">
                 <Lock className="h-5 w-5 text-pink-300 absolute left-3 top-3.5" />
-                <input
+                <Input
                   type="password"
                   value={credentials.password}
                   onChange={(e) =>
@@ -92,12 +94,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
               </div>
             </div>
 
-            <button
+            <Button
               type="submit"
               className="w-full bg-gradient-to-r from-pink-400 via-orange-400 to-yellow-300 text-white py-3 px-4 rounded-xl font-semibold text-lg shadow-lg hover:from-pink-500 hover:to-yellow-400 focus:ring-2 focus:ring-pink-300 focus:ring-offset-2 transition-all duration-200"
+              size="lg"
             >
               Sign In
-            </button>
+            </Button>
           </form>
 
           <div className="mt-8 p-4 bg-pink-50/80 rounded-xl w-full text-center">

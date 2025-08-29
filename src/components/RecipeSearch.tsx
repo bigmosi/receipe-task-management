@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Search,
   Heart,
@@ -36,10 +38,11 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
   const [loading, setLoading] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [activeTab, setActiveTab] = useState<"search" | "favorites">("search");
+  const [errorMsg, setErrorMsg] = useState<string>("");
 
   const searchRecipes = async (term: string) => {
     setLoading(true);
-
+    setErrorMsg("");
     try {
       let url;
       if (term.trim()) {
@@ -79,9 +82,9 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
       }));
 
       setRecipes(transformedRecipes);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching recipes:", error);
-      // Fallback to empty array on error
+      setErrorMsg(error?.message || "Unknown error occurred");
       setRecipes([]);
     } finally {
       setLoading(false);
@@ -118,7 +121,7 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
 
       {/* Tab Navigation */}
       <div className="flex space-x-1 bg-pink-100/60 p-1 rounded-lg w-fit mx-auto">
-        <button
+        <Button
           onClick={() => setActiveTab("search")}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             activeTab === "search"
@@ -127,8 +130,8 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
           }`}
         >
           Discover Recipes
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => setActiveTab("favorites")}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             activeTab === "favorites"
@@ -137,7 +140,7 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
           }`}
         >
           Favorites ({favoriteRecipes.length})
-        </button>
+        </Button>
       </div>
 
       {activeTab === "search" && (
@@ -149,7 +152,7 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
             >
               <div className="relative flex-1">
                 <Search className="h-5 w-5 text-pink-300 absolute left-3 top-3" />
-                <input
+                <Input
                   type="text"
                   placeholder="Search for recipes... (e.g., chicken, pasta, salad)"
                   value={searchTerm}
@@ -157,7 +160,7 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
                   className="w-full pl-10 pr-4 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-pink-300 focus:border-transparent bg-white/80 text-pink-700 placeholder-pink-300"
                 />
               </div>
-              <button
+              <Button
                 type="submit"
                 disabled={loading}
                 className="px-6 py-2 bg-gradient-to-r from-pink-400 via-orange-400 to-yellow-300 text-white rounded-lg font-semibold hover:from-pink-500 hover:to-yellow-400 focus:ring-2 focus:ring-pink-300 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -167,7 +170,7 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
                 ) : (
                   "Search"
                 )}
-              </button>
+              </Button>
             </form>
           </div>
 
@@ -202,7 +205,8 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
                       alt={recipe.title}
                       className="w-full h-44 sm:h-48 object-cover transition-transform duration-300 group-hover:scale-110 group-focus:scale-110"
                     />
-                    <button
+                    <Button
+                      type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         onToggleFavorite(recipe);
@@ -224,7 +228,7 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
                           isFavorite(recipe) ? "fill-current" : ""
                         }`}
                       />
-                    </button>
+                    </Button>
                   </div>
 
                   <div className="p-4 flex flex-col flex-1">
@@ -268,8 +272,15 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
             </div>
           )}
 
+          {/* Error Message */}
+          {errorMsg && !loading && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center mb-4">
+              <h3 className="text-lg font-medium text-red-700 mb-2">Error</h3>
+              <p className="text-red-500">{errorMsg}</p>
+            </div>
+          )}
           {/* No Results (always show if not loading and no recipes) */}
-          {!loading && recipes.length === 0 && (
+          {!loading && recipes.length === 0 && !errorMsg && (
             <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
               <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -326,18 +337,22 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
                     </p>
 
                     <div className="flex items-center justify-between mt-auto">
-                      <button
+                      <Button
+                        type="button"
                         onClick={() => setSelectedRecipe(recipe)}
+                        variant="ghost"
                         className="text-orange-500 hover:text-orange-700 font-medium text-sm"
                       >
                         View Details
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        type="button"
                         onClick={() => onToggleFavorite(recipe)}
+                        variant="ghost"
                         className="text-red-600 hover:text-red-700 text-sm font-medium"
                       >
                         Remove
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -352,12 +367,12 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
               <p className="text-pink-400 mb-6">
                 Start exploring recipes and add some to your favorites
               </p>
-              <button
+              <Button
                 onClick={() => setActiveTab("search")}
                 className="px-4 py-2 bg-gradient-to-r from-pink-400 via-orange-400 to-yellow-300 text-white rounded-lg hover:from-pink-500 hover:to-yellow-400 transition-colors"
               >
                 Discover Recipes
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -373,14 +388,18 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
                 alt={selectedRecipe.title}
                 className="w-full h-48 sm:h-64 object-cover rounded-t-xl"
               />
-              <button
+              <Button
+                type="button"
                 onClick={() => setSelectedRecipe(null)}
+                variant="ghost"
                 className="absolute top-4 right-4 bg-white text-pink-400 p-2 rounded-full shadow-lg hover:text-pink-700"
               >
                 ✕
-              </button>
-              <button
+              </Button>
+              <Button
+                type="button"
                 onClick={() => onToggleFavorite(selectedRecipe)}
+                variant="ghost"
                 className={`absolute top-4 left-4 p-2 rounded-full shadow-lg transition-colors ${
                   isFavorite(selectedRecipe)
                     ? "bg-red-100 text-red-600 hover:bg-red-200"
@@ -392,7 +411,7 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
                     isFavorite(selectedRecipe) ? "fill-current" : ""
                   }`}
                 />
-              </button>
+              </Button>
             </div>
 
             <div className="p-4 sm:p-6">
@@ -430,12 +449,14 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
                   <ExternalLink className="h-4 w-4 mr-2" />
                   View Full Recipe
                 </a>
-                <button
+                <Button
+                  type="button"
                   onClick={() => setSelectedRecipe(null)}
+                  variant="ghost"
                   className="px-4 py-2 text-pink-400 hover:text-pink-700 transition-colors"
                 >
                   Close
-                </button>
+                </Button>
               </div>
             </div>
           </div>
