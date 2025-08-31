@@ -57,7 +57,7 @@ npm run build
 
 ## Deployment
 
-- **Live Demo:** [Recipe & Task Management App on Vercel](https://vercel.com/bigmosis-projects/receipe-task-managementv)
+- **Live Demo:** [Recipe & Task Management App on Vercel](https://receipe-task-management.vercel.app/)
 - **Vercel:** Set environment variables in the Vercel dashboard (Settings → Environment Variables) with the same names as above.
 - Redeploy after saving variables.
 
