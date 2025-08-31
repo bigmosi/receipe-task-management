@@ -11,7 +11,7 @@ import {
 interface DashboardProps {
   tasks: any[];
   favoriteRecipes: any[];
-  onViewChange: (view: string) => void;
+  onViewChange?: (view: string) => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
@@ -152,12 +152,14 @@ const Dashboard: React.FC<DashboardProps> = ({
             <h3 className="text-lg font-semibold text-pink-700">
               Recent Tasks
             </h3>
-            <button
-              onClick={() => onViewChange("tasks")}
-              className="text-sm text-pink-500 hover:text-pink-700 font-medium"
-            >
-              View All
-            </button>
+            {onViewChange && (
+              <button
+                onClick={() => onViewChange("tasks")}
+                className="text-sm text-pink-500 hover:text-pink-700 font-medium"
+              >
+                View All
+              </button>
+            )}
           </div>
 
           {recentTasks.length > 0 ? (
@@ -189,12 +191,14 @@ const Dashboard: React.FC<DashboardProps> = ({
             <div className="text-center py-8">
               <Calendar className="h-12 w-12 text-pink-200 mx-auto mb-3" />
               <p className="text-pink-400">No pending tasks</p>
-              <button
-                onClick={() => onViewChange("tasks")}
-                className="text-pink-500 hover:text-pink-700 text-sm font-medium mt-2"
-              >
-                Create your first task
-              </button>
+              {onViewChange && (
+                <button
+                  onClick={() => onViewChange("tasks")}
+                  className="text-pink-500 hover:text-pink-700 text-sm font-medium mt-2"
+                >
+                  Create your first task
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -205,12 +209,14 @@ const Dashboard: React.FC<DashboardProps> = ({
             <h3 className="text-lg font-semibold text-orange-600">
               Favorite Recipes
             </h3>
-            <button
-              onClick={() => onViewChange("recipes")}
-              className="text-sm text-orange-400 hover:text-orange-600 font-medium"
-            >
-              Explore More
-            </button>
+            {onViewChange && (
+              <button
+                onClick={() => onViewChange("recipes")}
+                className="text-sm text-orange-400 hover:text-orange-600 font-medium"
+              >
+                Explore More
+              </button>
+            )}
           </div>
 
           {recentRecipes.length > 0 ? (
@@ -219,7 +225,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                 <div
                   key={recipe.id}
                   className="group cursor-pointer"
-                  onClick={() => onViewChange("recipes")}
+                  onClick={
+                    onViewChange ? () => onViewChange("recipes") : undefined
+                  }
                 >
                   <div className="relative overflow-hidden rounded-lg bg-orange-50 aspect-square">
                     <img
@@ -241,12 +249,14 @@ const Dashboard: React.FC<DashboardProps> = ({
             <div className="text-center py-8">
               <Star className="h-12 w-12 text-orange-100 mx-auto mb-3" />
               <p className="text-orange-300">No favorite recipes yet</p>
-              <button
-                onClick={() => onViewChange("recipes")}
-                className="text-orange-400 hover:text-orange-600 text-sm font-medium mt-2"
-              >
-                Discover recipes
-              </button>
+              {onViewChange && (
+                <button
+                  onClick={() => onViewChange("recipes")}
+                  className="text-orange-400 hover:text-orange-600 text-sm font-medium mt-2"
+                >
+                  Discover recipes
+                </button>
+              )}
             </div>
           )}
         </div>

@@ -1,25 +1,18 @@
 import React from "react";
+import { Link, useLocation } from "react-router-dom";
 import { User, LogOut, Calendar, ChefHat } from "lucide-react";
-
 interface LayoutProps {
   children: React.ReactNode;
-  currentView: string;
-  onViewChange: (view: string) => void;
   user: any;
   onLogout: () => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({
-  children,
-  currentView,
-  onViewChange,
-  user,
-  onLogout,
-}) => {
+const Layout: React.FC<LayoutProps> = ({ children, user, onLogout }) => {
+  const location = useLocation();
   const navItems = [
-    { id: "dashboard", label: "Dashboard", icon: Calendar },
-    { id: "tasks", label: "Tasks", icon: Calendar },
-    { id: "recipes", label: "Recipes", icon: ChefHat },
+    { id: "dashboard", label: "Dashboard", icon: Calendar, path: "/" },
+    { id: "tasks", label: "Tasks", icon: Calendar, path: "/tasks" },
+    { id: "recipes", label: "Recipes", icon: ChefHat, path: "/recipes" },
   ];
 
   return (
@@ -57,19 +50,20 @@ const Layout: React.FC<LayoutProps> = ({
           <div className="p-4 space-y-2">
             {navItems.map((item) => {
               const Icon = item.icon;
+              const isActive = location.pathname === item.path;
               return (
-                <button
+                <Link
                   key={item.id}
-                  onClick={() => onViewChange(item.id)}
+                  to={item.path}
                   className={`w-full flex items-center px-4 py-3 rounded-xl text-left transition-all duration-200 font-semibold text-lg ${
-                    currentView === item.id
+                    isActive
                       ? "bg-gradient-to-r from-pink-400 via-orange-300 to-yellow-200 text-white shadow-md"
                       : "text-pink-600 hover:bg-pink-100 hover:text-pink-900"
                   }`}
                 >
                   <Icon className="h-5 w-5 mr-3" />
                   {item.label}
-                </button>
+                </Link>
               );
             })}
           </div>
@@ -79,19 +73,20 @@ const Layout: React.FC<LayoutProps> = ({
         <nav className="fixed bottom-0 left-0 right-0 z-30 bg-gradient-to-r from-pink-50 via-orange-50 to-yellow-50 border-t border-pink-100 shadow-inner flex md:hidden justify-around py-2">
           {navItems.map((item) => {
             const Icon = item.icon;
+            const isActive = location.pathname === item.path;
             return (
-              <button
+              <Link
                 key={item.id}
-                onClick={() => onViewChange(item.id)}
+                to={item.path}
                 className={`flex flex-col items-center px-2 py-1 rounded-lg text-xs font-semibold transition-all duration-200 ${
-                  currentView === item.id
+                  isActive
                     ? "text-pink-700"
                     : "text-pink-400 hover:text-pink-700"
                 }`}
               >
                 <Icon className="h-6 w-6 mb-1" />
                 {item.label}
-              </button>
+              </Link>
             );
           })}
         </nav>

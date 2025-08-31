@@ -1,4 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Layout from "./components/Layout";
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
@@ -37,7 +43,6 @@ interface Recipe {
 
 function App() {
   const [user, setUser] = useState<any>(null);
-  const [currentView, setCurrentView] = useState("dashboard");
   const [tasks, setTasks] = useState<Task[]>([]);
   const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([]);
 
@@ -88,7 +93,6 @@ function App() {
   const handleLogout = () => {
     setUser(null);
     removeUser();
-    setCurrentView("dashboard");
   };
 
   const handleAddTask = (taskData: Omit<Task, "id" | "createdAt">) => {
@@ -121,56 +125,52 @@ function App() {
     });
   };
 
-  const renderCurrentView = () => {
-    switch (currentView) {
-      case "dashboard":
-        return (
-          <Dashboard
-            tasks={tasks}
-            favoriteRecipes={favoriteRecipes}
-            onViewChange={setCurrentView}
-          />
-        );
-      case "tasks":
-        return (
-          <TaskManager
-            tasks={tasks}
-            onAddTask={handleAddTask}
-            onUpdateTask={handleUpdateTask}
-            onDeleteTask={handleDeleteTask}
-          />
-        );
-      case "recipes":
-        return (
-          <RecipeSearch
-            favoriteRecipes={favoriteRecipes}
-            onToggleFavorite={handleToggleFavoriteRecipe}
-          />
-        );
-      default:
-        return (
-          <Dashboard
-            tasks={tasks}
-            favoriteRecipes={favoriteRecipes}
-            onViewChange={setCurrentView}
-          />
-        );
-    }
-  };
+  // ...existing code...
 
   if (!user) {
-    return <Login onLogin={handleLogin} />;
+    return (
+      <Router>
+        <Routes>
+          <Route path="/*" element={<Login onLogin={handleLogin} />} />
+        </Routes>
+      </Router>
+    );
   }
 
   return (
-    <Layout
-      currentView={currentView}
-      onViewChange={setCurrentView}
-      user={user}
-      onLogout={handleLogout}
-    >
-      {renderCurrentView()}
-    </Layout>
+    <Router>
+      <Layout user={user} onLogout={handleLogout}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <Dashboard tasks={tasks} favoriteRecipes={favoriteRecipes} />
+            }
+          />
+          <Route
+            path="/tasks"
+            element={
+              <TaskManager
+                tasks={tasks}
+                onAddTask={handleAddTask}
+                onUpdateTask={handleUpdateTask}
+                onDeleteTask={handleDeleteTask}
+              />
+            }
+          />
+          <Route
+            path="/recipes"
+            element={
+              <RecipeSearch
+                favoriteRecipes={favoriteRecipes}
+                onToggleFavorite={handleToggleFavoriteRecipe}
+              />
+            }
+          />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Layout>
+    </Router>
   );
 }
 

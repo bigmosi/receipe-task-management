@@ -57,8 +57,19 @@ const RecipeSearch: React.FC<RecipeSearchProps> = ({
 
       const response = await fetch(url);
 
+      // Check if response is HTML (not JSON)
+      const contentType = response.headers.get("content-type");
       if (!response.ok) {
         throw new Error(`API request failed: ${response.status}`);
+      }
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        if (text.startsWith("<!doctype") || text.startsWith("<html")) {
+          throw new Error(
+            "API returned HTML instead of JSON. Check your API key and endpoint."
+          );
+        }
+        throw new Error("Unexpected response format from API.");
       }
 
       const data = await response.json();

@@ -92,6 +92,14 @@ project/
 
 - [Spoonacular API Docs](https://spoonacular.com/food-api/docs)
 
+## Routes
+
+The app uses React Router for navigation. Available routes:
+
+- `/` — Dashboard (overview of tasks and favorite recipes)
+- `/tasks` — Task Manager (add, edit, delete, and manage tasks)
+- `/recipes` — Recipe Search (discover and save recipes)
+
 ## Troubleshooting
 
 - If API calls fail on Vercel, ensure environment variables are set and redeploy.
