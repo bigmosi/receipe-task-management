@@ -16,15 +16,24 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     email: "kinyeramo@gmail.com",
     password: "password",
   });
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock authentication
-    onLogin({
-      id: 1,
-      name: "Kinyera Amos",
-      email: credentials.email,
-    });
+    // Basic credential check
+    if (
+      credentials.email === "kinyeramo@gmail.com" &&
+      credentials.password === "password"
+    ) {
+      setErrorMsg("");
+      onLogin({
+        id: 1,
+        name: "Kinyera Amos",
+        email: credentials.email,
+      });
+    } else {
+      setErrorMsg("Invalid email or password. Please try again.");
+    }
   };
 
   return (
@@ -56,6 +65,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="w-full space-y-6">
+            {errorMsg && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-center mb-2">
+                <span className="text-red-600 text-sm font-medium">
+                  {errorMsg}
+                </span>
+              </div>
+            )}
             <div>
               <label className="block text-sm font-medium text-pink-700 mb-2">
                 Email Address
