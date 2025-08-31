@@ -11,8 +11,8 @@ import {
   Star,
 } from "lucide-react";
 
-const SPOONACULAR_API_KEY = "0a8a7d69cb0e4bc4863f1cd24b262655";
-const SPOONACULAR_BASE_URL = "https://api.spoonacular.com/recipes";
+const SPOONACULAR_API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY;
+const SPOONACULAR_BASE_URL = import.meta.env.VITE_SPOONACULAR_BASE_URL;
 
 interface Recipe {
   id: number;

@@ -13,7 +13,7 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [credentials, setCredentials] = useState({
-    email: "demo@taskflow.com",
+    email: "kinyeramo@gmail.com",
     password: "password",
   });
 
@@ -22,7 +22,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     // Mock authentication
     onLogin({
       id: 1,
-      name: "Demo User",
+      name: "Kinyera Amos",
       email: credentials.email,
     });
   };
@@ -105,7 +105,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
           <div className="mt-8 p-4 bg-pink-50/80 rounded-xl w-full text-center">
             <p className="text-sm text-pink-500">
-              Demo credentials are pre-filled. Just click{" "}
+              Credentials are pre-filled. Just click{" "}
               <span className="font-semibold">Sign In</span> to continue.
             </p>
           </div>
