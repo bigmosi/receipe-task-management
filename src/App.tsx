@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import Layout from './components/Layout';
-import Login from './components/Login';
-import Dashboard from './components/Dashboard';
-import TaskManager from './components/TaskManager';
-import RecipeSearch from './components/RecipeSearch';
+import React, { useState, useEffect } from "react";
+import Layout from "./components/Layout";
+import Login from "./components/Login";
+import Dashboard from "./components/Dashboard";
+import TaskManager from "./components/TaskManager";
+import RecipeSearch from "./components/RecipeSearch";
 import {
   loadTasks,
   saveTasks,
@@ -12,14 +12,14 @@ import {
   loadUser,
   saveUser,
   removeUser,
-  generateId
-} from './utils/storage';
+  generateId,
+} from "./utils/storage";
 
 interface Task {
   id: string;
   title: string;
   description: string;
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
   dueDate: string;
   completed: boolean;
   createdAt: string;
@@ -37,20 +37,38 @@ interface Recipe {
 
 function App() {
   const [user, setUser] = useState<any>(null);
-  const [currentView, setCurrentView] = useState('dashboard');
+  const [currentView, setCurrentView] = useState("dashboard");
   const [tasks, setTasks] = useState<Task[]>([]);
   const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([]);
 
-  // Load data on app start
   useEffect(() => {
     const savedUser = loadUser();
     if (savedUser) {
       setUser(savedUser);
     }
-    
     setTasks(loadTasks());
     setFavoriteRecipes(loadFavoriteRecipes());
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    let timer: NodeJS.Timeout;
+    const logoutAfterInactivity = () => {
+      handleLogout();
+    };
+    const resetTimer = () => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(logoutAfterInactivity, 5 * 60 * 1000);
+    };
+    // List of events to track
+    const events = ["mousemove", "keydown", "mousedown", "touchstart"];
+    events.forEach((event) => window.addEventListener(event, resetTimer));
+    resetTimer();
+    return () => {
+      if (timer) clearTimeout(timer);
+      events.forEach((event) => window.removeEventListener(event, resetTimer));
+    };
+  }, [user]);
 
   // Save tasks whenever they change
   useEffect(() => {
@@ -70,35 +88,33 @@ function App() {
   const handleLogout = () => {
     setUser(null);
     removeUser();
-    setCurrentView('dashboard');
+    setCurrentView("dashboard");
   };
 
-  const handleAddTask = (taskData: Omit<Task, 'id' | 'createdAt'>) => {
+  const handleAddTask = (taskData: Omit<Task, "id" | "createdAt">) => {
     const newTask: Task = {
       ...taskData,
       id: generateId(),
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
-    setTasks(prev => [...prev, newTask]);
+    setTasks((prev) => [...prev, newTask]);
   };
 
   const handleUpdateTask = (id: string, updates: Partial<Task>) => {
-    setTasks(prev => 
-      prev.map(task => 
-        task.id === id ? { ...task, ...updates } : task
-      )
+    setTasks((prev) =>
+      prev.map((task) => (task.id === id ? { ...task, ...updates } : task))
     );
   };
 
   const handleDeleteTask = (id: string) => {
-    setTasks(prev => prev.filter(task => task.id !== id));
+    setTasks((prev) => prev.filter((task) => task.id !== id));
   };
 
   const handleToggleFavoriteRecipe = (recipe: Recipe) => {
-    setFavoriteRecipes(prev => {
-      const isAlreadyFavorite = prev.some(fav => fav.id === recipe.id);
+    setFavoriteRecipes((prev) => {
+      const isAlreadyFavorite = prev.some((fav) => fav.id === recipe.id);
       if (isAlreadyFavorite) {
-        return prev.filter(fav => fav.id !== recipe.id);
+        return prev.filter((fav) => fav.id !== recipe.id);
       } else {
         return [...prev, recipe];
       }
@@ -107,7 +123,7 @@ function App() {
 
   const renderCurrentView = () => {
     switch (currentView) {
-      case 'dashboard':
+      case "dashboard":
         return (
           <Dashboard
             tasks={tasks}
@@ -115,7 +131,7 @@ function App() {
             onViewChange={setCurrentView}
           />
         );
-      case 'tasks':
+      case "tasks":
         return (
           <TaskManager
             tasks={tasks}
@@ -124,7 +140,7 @@ function App() {
             onDeleteTask={handleDeleteTask}
           />
         );
-      case 'recipes':
+      case "recipes":
         return (
           <RecipeSearch
             favoriteRecipes={favoriteRecipes}
