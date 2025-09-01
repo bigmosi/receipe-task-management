@@ -125,8 +125,6 @@ function App() {
     });
   };
 
-  // ...existing code...
-
   if (!user) {
     return (
       <Router>
